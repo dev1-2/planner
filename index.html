@@ -8,7 +8,21 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main class="shell">
+  <section id="authScreen" class="auth-screen">
+    <div class="auth-card">
+      <p class="eyebrow">PLANNER ACCOUNT</p>
+      <h1>Willkommen<br><span>zurück.</span></h1>
+      <p class="auth-copy">Melde dich an, um deine Termine und Erinnerungen zu verwalten.</p>
+      <form id="authForm">
+        <label>Benutzername<input name="username" required minlength="3" maxlength="40" autocomplete="username"></label>
+        <label>Passwort<input name="password" type="password" required minlength="8" autocomplete="current-password"></label>
+        <button class="primary-button full-width" type="submit">Anmelden</button>
+        <button class="text-button" id="registerButton" type="button">Neuen Account erstellen</button>
+        <p id="authError" class="auth-error" role="alert" hidden></p>
+      </form>
+    </div>
+  </section>
+  <main class="shell" hidden>
     <section class="hero">
       <div>
         <p class="eyebrow">TERMINE & ERINNERUNGEN</p>
@@ -36,7 +50,7 @@
           <p class="eyebrow">ÜBERSICHT</p>
           <h2>Nächste Termine</h2>
         </div>
-        <button class="primary-button" id="openFormButton" type="button"><span>+</span> Termin</button>
+        <div class="heading-actions"><span id="userLabel" class="user-label"></span><button class="text-button" id="logoutButton" type="button">Abmelden</button><button class="primary-button" id="openFormButton" type="button"><span>+</span> Termin</button></div>
       </div>
 
       <div class="stats" aria-label="Termin-Statistik">

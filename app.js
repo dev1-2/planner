@@ -7,6 +7,12 @@ const filterSelect = document.querySelector('#filterSelect');
 const whatsappStatus = document.querySelector('#whatsappStatus');
 const whatsappHint = document.querySelector('#whatsappHint');
 const whatsappQr = document.querySelector('#whatsappQr');
+const authScreen = document.querySelector('#authScreen');
+const authForm = document.querySelector('#authForm');
+const authError = document.querySelector('#authError');
+const registerButton = document.querySelector('#registerButton');
+const logoutButton = document.querySelector('#logoutButton');
+const userLabel = document.querySelector('#userLabel');
 
 let appointments = [];
 
@@ -15,6 +21,8 @@ const fullDateFormatter = new Intl.DateTimeFormat('de-DE', { weekday: 'long', da
 
 function toDate(appointment) { return new Date(`${appointment.date}T${appointment.time}`); }
 function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' }[character])); }
+function showAuthError(message) { authError.textContent = message; authError.hidden = false; }
+function showPlanner(user) { authScreen.hidden = true; document.querySelector('main').hidden = false; userLabel.textContent = user.username; loadAppointments().catch(() => {}); loadWhatsAppStatus().catch(() => {}); }
 function render() {
   const now = new Date();
   const query = searchInput.value.trim().toLowerCase();
@@ -69,6 +77,20 @@ async function loadWhatsAppStatus() {
   if (status.qr) whatsappQr.src = status.qr;
 }
 
-loadAppointments().catch(() => { emptyState.hidden = false; });
-loadWhatsAppStatus().catch(() => { whatsappStatus.textContent = 'WhatsApp-Status nicht erreichbar'; });
-setInterval(() => loadWhatsAppStatus().catch(() => {}), 5000);
+async function authenticate(endpoint) {
+  const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(new FormData(authForm))) });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || 'Anmeldung fehlgeschlagen.');
+  showPlanner(result.user);
+}
+
+authForm.addEventListener('submit', async event => { event.preventDefault(); authError.hidden = true; try { await authenticate('/api/auth/login'); } catch (error) { showAuthError(error.message); } });
+registerButton.addEventListener('click', async () => { authError.hidden = true; try { await authenticate('/api/auth/register'); } catch (error) { showAuthError(error.message); } });
+logoutButton.addEventListener('click', async () => { await fetch('/api/auth/logout', { method: 'POST' }); window.location.reload(); });
+
+(async () => {
+  const response = await fetch('/api/auth/me');
+  const result = await response.json();
+  if (result.user) showPlanner(result.user);
+})();
+setInterval(() => { if (!authScreen.hidden) return; loadWhatsAppStatus().catch(() => {}); }, 5000);

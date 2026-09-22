@@ -1,4 +1,5 @@
 .env
 .wwebjs_auth/
 data/
+data/*.sqlite*
 node_modules/

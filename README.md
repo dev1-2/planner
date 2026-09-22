@@ -1,6 +1,10 @@
 # Planer
 
-Kleine Terminverwaltung mit Server-Speicherung und WhatsApp-Web-Erinnerungen.
+Kleine Terminverwaltung mit SQLite-Datenbank, Benutzerkonten und WhatsApp-Web-Erinnerungen.
+
+## Benutzer und Datenbank
+
+Beim ersten Aufruf kannst du einen Account erstellen. Passwörter werden als `scrypt`-Hash gespeichert, Login-Sessions liegen als HttpOnly-Cookie vor und jeder Termin gehört serverseitig genau einem Benutzer. Die Datenbank liegt lokal unter `data/planner.sqlite` und wird nicht ins Git-Repository übertragen.
 
 ## UI lokal testen
 
@@ -13,7 +17,7 @@ Die App wird auf dem VPS mit `node server.js` gestartet und dann ueber die Domai
 3. In WhatsApp auf dem Handy `Einstellungen > Verknüpfte Geräte > Gerät verknüpfen` öffnen.
 4. Den QR-Code aus der Planner-Oberfläche scannen.
 
-Die Sitzung wird in `.wwebjs_auth` gespeichert. Der Server prüft alle 30 Sekunden fällige Erinnerungen und sendet normale WhatsApp-Nachrichten. Diese Methode ist nicht die offizielle WhatsApp Business API, kann gegen WhatsApp-Regeln verstoßen und zur Sperrung der Nummer führen. Nur mit Einwilligung der Empfänger verwenden.
+Die WhatsApp-Sitzung wird in `.wwebjs_auth` gespeichert. Die WhatsApp-Verbindung ist derzeit global für den VPS; die Termine selbst sind pro Benutzer getrennt. Der Server prüft alle 30 Sekunden fällige Erinnerungen und sendet normale WhatsApp-Nachrichten. Diese Methode ist nicht die offizielle WhatsApp Business API, kann gegen WhatsApp-Regeln verstoßen und zur Sperrung der Nummer führen. Nur mit Einwilligung der Empfänger verwenden.
 
 ## Auf dem STRATO VPS installieren
 
