@@ -13,6 +13,7 @@ const authError = document.querySelector('#authError');
 const registerButton = document.querySelector('#registerButton');
 const logoutButton = document.querySelector('#logoutButton');
 const userLabel = document.querySelector('#userLabel');
+const toast = document.querySelector('#toast');
 
 let appointments = [];
 
@@ -22,6 +23,7 @@ const fullDateFormatter = new Intl.DateTimeFormat('de-DE', { weekday: 'long', da
 function toDate(appointment) { return new Date(`${appointment.date}T${appointment.time}`); }
 function escapeHtml(value) { return String(value).replace(/[&<>'"]/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' }[character])); }
 function showAuthError(message) { authError.textContent = message; authError.hidden = false; }
+function showToast(message) { toast.textContent = message; toast.hidden = false; window.clearTimeout(showToast.timeout); showToast.timeout = window.setTimeout(() => { toast.hidden = true; }, 3200); }
 function showPlanner(user) { authScreen.hidden = true; document.querySelector('main').hidden = false; userLabel.textContent = user.username; loadAppointments().catch(() => {}); loadWhatsAppStatus().catch(() => {}); }
 function render() {
   const now = new Date();
@@ -32,12 +34,13 @@ function render() {
     .filter(item => filter === 'all' || (filter === 'today' ? toDate(item).toDateString() === now.toDateString() : toDate(item) >= new Date(now.getTime() - 60000)))
     .sort((a, b) => toDate(a) - toDate(b));
 
+  const styleLabels = { random: 'Zufällig', concise: 'Sachlich', friendly: 'Freundlich', personal: 'Persönlich' };
   list.innerHTML = visible.map(item => {
     const appointmentDate = toDate(item);
     const past = appointmentDate < now;
     return `<article class="appointment ${past ? 'past' : ''}">
       <div class="appointment-date">${escapeHtml(dateFormatter.format(appointmentDate))}<small>${escapeHtml(item.time)} Uhr</small></div>
-      <div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.contactName || 'Kein Kontakt')} ${item.phone ? `· ${escapeHtml(item.phone)}` : ''}</p></div>
+      <div><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.contactName || 'Kein Kontakt')} ${item.phone ? `· ${escapeHtml(item.phone)}` : ''}</p><span class="message-type">${escapeHtml(styleLabels[item.messageStyle] || 'Zufällig')}</span></div>
       <div class="appointment-actions"><span class="status">${item.sent ? 'Gesendet' : 'Geplant'}</span><button class="delete-button" data-delete="${item.id}" aria-label="Termin löschen">×</button></div>
     </article>`;
   }).join('');
@@ -55,10 +58,10 @@ form.addEventListener('submit', async event => {
   event.preventDefault();
   const data = new FormData(form);
   const response = await fetch('/api/appointments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Object.fromEntries(data)) });
-  if (!response.ok) return alert('Der Termin konnte nicht gespeichert werden.');
-  await loadAppointments(); dialog.close();
+  if (!response.ok) return showToast('Der Termin konnte nicht gespeichert werden.');
+  await loadAppointments(); dialog.close(); showToast('Termin gespeichert');
 });
-list.addEventListener('click', async event => { const button = event.target.closest('[data-delete]'); if (!button) return; await fetch(`/api/appointments/${button.dataset.delete}`, { method: 'DELETE' }); await loadAppointments(); });
+list.addEventListener('click', async event => { const button = event.target.closest('[data-delete]'); if (!button) return; await fetch(`/api/appointments/${button.dataset.delete}`, { method: 'DELETE' }); await loadAppointments(); showToast('Termin gelöscht'); });
 searchInput.addEventListener('input', render); filterSelect.addEventListener('change', render);
 
 async function loadAppointments() {
@@ -72,7 +75,7 @@ async function loadWhatsAppStatus() {
   if (!response.ok) throw new Error('WhatsApp-Status konnte nicht geladen werden.');
   const status = await response.json();
   whatsappStatus.textContent = status.ready ? 'WhatsApp ist verbunden' : status.status;
-  whatsappHint.textContent = status.ready ? 'Erinnerungen werden über diese verknüpfte Sitzung gesendet.' : 'Scanne den QR-Code mit WhatsApp unter „Verknüpfte Geräte“. Der QR-Code läuft regelmäßig ab.';
+  whatsappHint.textContent = status.ready ? 'Deine Erinnerungen werden über deine verknüpfte Sitzung gesendet.' : 'Scanne den QR-Code deiner eigenen Nummer unter „Verknüpfte Geräte“. Der QR-Code läuft regelmäßig ab.';
   whatsappQr.hidden = !status.qr;
   if (status.qr) whatsappQr.src = status.qr;
 }

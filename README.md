@@ -17,7 +17,9 @@ Die App wird auf dem VPS mit `node server.js` gestartet und dann ueber die Domai
 3. In WhatsApp auf dem Handy `Einstellungen > Verknüpfte Geräte > Gerät verknüpfen` öffnen.
 4. Den QR-Code aus der Planner-Oberfläche scannen.
 
-Die WhatsApp-Sitzung wird in `.wwebjs_auth` gespeichert. Die WhatsApp-Verbindung ist derzeit global für den VPS; die Termine selbst sind pro Benutzer getrennt. Der Server prüft alle 30 Sekunden fällige Erinnerungen und sendet normale WhatsApp-Nachrichten. Diese Methode ist nicht die offizielle WhatsApp Business API, kann gegen WhatsApp-Regeln verstoßen und zur Sperrung der Nummer führen. Nur mit Einwilligung der Empfänger verwenden.
+Jeder Benutzer bekommt eine eigene WhatsApp-Web-Sitzung und einen eigenen QR-Code. Die Sitzungen werden unter `.wwebjs_auth` gespeichert. Der Server prüft alle 30 Sekunden fällige Erinnerungen und sendet über die jeweilige Benutzer-Nummer. Jede aktive Sitzung startet Chromium; für 2 bis 3 gleichzeitig verbundene Benutzer sollte der VPS mindestens 4 GB RAM haben. Diese Methode ist nicht die offizielle WhatsApp Business API, kann gegen WhatsApp-Regeln verstoßen und zur Sperrung einer Nummer führen. Nur mit Einwilligung der Empfänger verwenden.
+
+Für Erinnerungen gibt es drei Vorlagen: `Sachlich`, `Freundlich` und `Persönlich`. Mit `Zufällig auswählen` wird beim Versand eine der drei Varianten gewählt. Bestehende Termine erhalten automatisch die Einstellung `Zufällig`.
 
 ## Auf dem STRATO VPS installieren
 
