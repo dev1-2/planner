@@ -1,0 +1,9 @@
+name = "planner-whatsapp"
+main = "worker.js"
+compatibility_date = "2026-09-19"
+
+[triggers]
+crons = []
+
+[vars]
+WHATSAPP_TEMPLATE = "appointment_reminder"

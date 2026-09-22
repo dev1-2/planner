@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173f5f">
+  <title>Planer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">TERMINE & ERINNERUNGEN</p>
+        <h1>Dein Tag,<br><span>im Blick.</span></h1>
+        <p class="intro">Plane Termine an einem Ort und schicke Erinnerungen automatisch per WhatsApp.</p>
+      </div>
+      <div class="date-card" aria-label="Heutiges Datum">
+        <span id="todayLabel"></span>
+        <strong id="todayDate"></strong>
+      </div>
+    </section>
+
+    <section class="workspace" aria-label="Terminverwaltung">
+      <aside class="whatsapp-panel" aria-label="WhatsApp-Verbindung">
+        <div>
+          <p class="eyebrow">WHATSAPP WEB</p>
+          <h2 id="whatsappStatus">Verbindung wird gestartet ...</h2>
+          <p id="whatsappHint">Scanne den QR-Code mit WhatsApp unter „Verknüpfte Geräte“.</p>
+        </div>
+        <img id="whatsappQr" class="whatsapp-qr" alt="WhatsApp QR-Code" hidden>
+      </aside>
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">ÜBERSICHT</p>
+          <h2>Nächste Termine</h2>
+        </div>
+        <button class="primary-button" id="openFormButton" type="button"><span>+</span> Termin</button>
+      </div>
+
+      <div class="stats" aria-label="Termin-Statistik">
+        <div><span>Geplant</span><strong id="plannedCount">0</strong></div>
+        <div><span>Heute</span><strong id="todayCount">0</strong></div>
+        <div><span>WhatsApp</span><strong id="sentCount">0</strong></div>
+      </div>
+
+      <div class="toolbar">
+        <label class="search"><span>⌕</span><input id="searchInput" type="search" placeholder="Termine durchsuchen"></label>
+        <select id="filterSelect" aria-label="Termine filtern">
+          <option value="upcoming">Kommende</option>
+          <option value="all">Alle Termine</option>
+          <option value="today">Heute</option>
+        </select>
+      </div>
+
+      <div id="appointmentList" class="appointment-list"></div>
+      <div id="emptyState" class="empty-state" hidden>
+        <span class="empty-icon">✦</span>
+        <h3>Noch keine Termine</h3>
+        <p>Lege deinen ersten Termin an. Die WhatsApp-Erinnerung lässt sich später im Worker aktivieren.</p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="appointmentDialog">
+    <form id="appointmentForm" method="dialog">
+      <div class="dialog-heading">
+        <div><p class="eyebrow">NEUER EINTRAG</p><h2>Termin planen</h2></div>
+        <button class="icon-button" id="closeFormButton" type="button" aria-label="Fenster schließen">×</button>
+      </div>
+      <label>Titel<input name="title" required maxlength="80" placeholder="z. B. Beratungsgespräch"></label>
+      <div class="two-columns">
+        <label>Datum<input name="date" type="date" required></label>
+        <label>Uhrzeit<input name="time" type="time" required></label>
+      </div>
+      <label>Kontaktname<input name="contactName" maxlength="80" placeholder="z. B. Max Mustermann"></label>
+      <label>WhatsApp-Nummer<input name="phone" type="tel" required placeholder="+49 170 1234567"></label>
+      <label>Erinnerung
+        <select name="reminderMinutes">
+          <option value="1440">1 Tag vorher</option>
+          <option value="120">2 Stunden vorher</option>
+          <option value="60">1 Stunde vorher</option>
+          <option value="15">15 Minuten vorher</option>
+        </select>
+      </label>
+      <button class="primary-button full-width" type="submit">Termin speichern</button>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>

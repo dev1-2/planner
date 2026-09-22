@@ -1,0 +1,16 @@
+[Unit]
+Description=Planner Termin-App
+After=network.target
+
+[Service]
+Type=simple
+User=planner
+WorkingDirectory=/opt/planner
+EnvironmentFile=/opt/planner/.env
+Environment=TZ=Europe/Berlin
+ExecStart=/usr/bin/node /opt/planner/server.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

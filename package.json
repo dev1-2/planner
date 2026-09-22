@@ -1,0 +1,14 @@
+{
+  "name": "planner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Terminplaner mit WhatsApp-Web-Erinnerungen",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "qrcode": "^1.5.4",
+    "whatsapp-web.js": "^1.26.0"
+  }
+}
